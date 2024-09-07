@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriCare</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('https://img.freepik.com/free-photo/agriculture-iot-with-rice-field-background_53876-124635.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .header {
+            font-size: 6em;
+            color: #584c09;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .upload-section {
+            background: rgb(231 229 194 / 90%);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 100%;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        .upload-section h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+            font-weight: bold;
+        }
+        input[type="file"] {
+            display: block;
+            margin: 20px auto;
+            font-size: 1.1em;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            padding: 10px;
+            background: #fff;
+            color: #333;
+        }
+        button {
+            padding: 15px 30px;
+            background: #4CAF50;
+            border: none;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            border-radius: 5px;
+            display: block;
+            margin: 20px auto;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 1.5em;
+            text-align: center;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">AgriCare</div>
+    <div class="container">
+        <div class="upload-section">
+            <h2>Upload Your Image</h2>
+            <form id="upload-form" enctype="multipart/form-data">
+                <input type="file" name="image" id="image" accept="image/*" required>
+                <button type="submit">predict</button>
+            </form>
+            <div id="result" class="result"></div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData();
+            formData.append('image', document.getElementById('image').files[0]);
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('result').textContent = `Error: ${data.error}`;
+                } else {
+                    document.getElementById('result').textContent = `Predicted Class: ${data.prediction}`;
+                }
+            })
+            .catch(error => {
+                document.getElementById('result').textContent = `Error: ${error}`;
+            });
+        });
+    </script>
+</body>
+</html>
